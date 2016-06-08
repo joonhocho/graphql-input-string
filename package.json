@@ -25,10 +25,13 @@
   "keywords": [
     "configurable",
     "custom",
+    "input",
     "string",
-    "type",
     "scalar",
-    "graphql"
+    "type",
+    "GraphQL",
+    "sanitization",
+    "validation."
   ],
   "author": "Joon Ho Cho",
   "license": "MIT",
