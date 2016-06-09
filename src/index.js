@@ -19,10 +19,10 @@ export default ({
   empty,
   max,
   min,
+  parse,
   pattern,
   sanitize,
   test,
-  transform,
   trim,
   trimLeft,
   trimRight,
@@ -93,8 +93,8 @@ export default ({
       error(value, ast);
     }
 
-    if (transform) {
-      return transform(value);
+    if (parse) {
+      return parse(value);
     }
 
     return value;

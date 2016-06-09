@@ -271,11 +271,11 @@ describe('GraphQLInputString', () => {
     testEqual(schema, done, value, value);
   });
 
-  it('transform', (done) => {
+  it('parse', (done) => {
     const schema = getSchema({
-      typeName: 'transform',
-      min: 5, // not forced to transform.
-      transform: (s) => s.substring(0, 3),
+      typeName: 'parse',
+      min: 5, // not forced to parse.
+      parse: (s) => s.substring(0, 3),
     });
 
     const value = ' 921hluaocb1 au0[g2930,0.uh, ';
