@@ -238,6 +238,17 @@ describe('GraphQLInputString', () => {
     testEqual(schema, done, value, value);
   });
 
+  it('pattern string ok', (done) => {
+    const schema = getSchema({
+      typeName: 'pattern',
+      pattern: '^\\w+$',
+    });
+
+    const value = 'abc';
+
+    testEqual(schema, done, value, value);
+  });
+
   it('test bad', (done) => {
     const schema = getSchema({
       typeName: 'test',
@@ -258,5 +269,42 @@ describe('GraphQLInputString', () => {
     const value = 'ab';
 
     testEqual(schema, done, value, value);
+  });
+
+  it('typeName', () => {
+    expect(() => GraphQLInputString({
+      argName: 'a',
+    })).to.throw(/typeName/);
+  });
+
+  it('argName', () => {
+    expect(() => GraphQLInputString({
+      typeName: 'a',
+    })).to.throw(/argName/);
+  });
+
+  it('serialize', (done) => {
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          output: {
+            type: GraphQLInputString({
+              typeName: 'output',
+              argName: 'output',
+              trim: true,
+            }),
+            resolve: () => ' test ',
+          },
+        },
+      }),
+    });
+
+    graphql(schema, '{ output }')
+      .then((res) => {
+        // trim is only applied to input
+        expect(res.data.output).to.equal(' test ');
+      })
+      .then(done, done);
   });
 });
