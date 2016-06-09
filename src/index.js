@@ -16,6 +16,7 @@ export default ({
   min,
   max,
   pattern,
+  test,
 }) => {
   if (!typeName) {
     throw new Error('"typeName" is required');
@@ -30,7 +31,7 @@ export default ({
   }
 
   const error = (value, ast, message) => {
-    throw new GraphQLError(`Argument "${argName}" has invalid value ${JSON.stringify(value)}. ${message}.`, [ast]);
+    throw new GraphQLError(`Argument "${argName}" has invalid value ${JSON.stringify(value)}.${message ? ' ' + message : ''}.`, [ast]);
   };
 
   return new GraphQLScalarType({
@@ -76,6 +77,10 @@ export default ({
 
       if (pattern != null && !pattern.test(value)) {
         error(value, ast, 'Unexpected pattern');
+      }
+
+      if (test && !test(value)) {
+        error(value, ast);
       }
 
       return value;

@@ -237,4 +237,26 @@ describe('GraphQLInputString', () => {
 
     testEqual(schema, done, value, value);
   });
+
+  it('test bad', (done) => {
+    const schema = getSchema({
+      typeName: 'test',
+      test: (x) => x.length < 3,
+    });
+
+    const value = 'abc';
+
+    testError(schema, done, value, /invalid/);
+  });
+
+  it('test ok', (done) => {
+    const schema = getSchema({
+      typeName: 'test',
+      test: (x) => x.length < 3,
+    });
+
+    const value = 'ab';
+
+    testEqual(schema, done, value, value);
+  });
 });
