@@ -6,3 +6,5 @@
 src
 test
 testout
+coverage
+.nyc_output
