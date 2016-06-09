@@ -15,18 +15,19 @@ function coerceString(value) {
 }
 
 export default ({
-  typeName,
   argName,
+  empty,
+  max,
+  min,
+  pattern,
+  sanitize,
+  test,
+  transform,
   trim,
   trimLeft,
   trimRight,
   truncate,
-  transform,
-  empty,
-  min,
-  max,
-  pattern,
-  test,
+  typeName,
 }) => {
   if (!typeName) {
     throw new Error('"typeName" is required');
@@ -65,8 +66,8 @@ export default ({
       value = value.substring(0, truncate);
     }
 
-    if (transform) {
-      value = transform(value);
+    if (sanitize) {
+      value = sanitize(value);
       if (!isString(value)) {
         return null;
       }
@@ -90,6 +91,10 @@ export default ({
 
     if (test && !test(value)) {
       error(value, ast);
+    }
+
+    if (transform) {
+      return transform(value);
     }
 
     return value;

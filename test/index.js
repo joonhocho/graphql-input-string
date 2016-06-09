@@ -140,10 +140,10 @@ describe('GraphQLInputString', () => {
     testEqual(schema, done, value, expected);
   });
 
-  it('transform', (done) => {
+  it('sanitize', (done) => {
     const schema = getSchema({
-      typeName: 'truncate',
-      transform: (s) => s.replace(/[^\d]*/g, ''),
+      typeName: 'sanitize',
+      sanitize: (s) => s.replace(/[^\d]*/g, ''),
     });
 
     const value = ' 921hluaocb1 au0[g2930,0.uh, ';
@@ -269,6 +269,19 @@ describe('GraphQLInputString', () => {
     const value = 'ab';
 
     testEqual(schema, done, value, value);
+  });
+
+  it('transform', (done) => {
+    const schema = getSchema({
+      typeName: 'transform',
+      min: 5, // not forced to transform.
+      transform: (s) => s.substring(0, 3),
+    });
+
+    const value = ' 921hluaocb1 au0[g2930,0.uh, ';
+    const expected = value.substring(0, 3);
+
+    testEqual(schema, done, value, expected);
   });
 
   it('typeName', () => {
