@@ -1,7 +1,7 @@
 {
-  "name": "graphql-string",
+  "name": "graphql-input-string",
   "version": "0.0.1",
-  "description": "A configurable custom string type for GraphQL",
+  "description": "A configurable custom input string type for GraphQL with sanitization and validation.",
   "main": "lib/index.js",
   "directories": {
     "test": "test"
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joonhocho/graphql-string.git"
+    "url": "git+https://github.com/joonhocho/graphql-input-string.git"
   },
   "keywords": [
     "configurable",
@@ -37,9 +37,9 @@
   "author": "Joon Ho Cho",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/joonhocho/graphql-string/issues"
+    "url": "https://github.com/joonhocho/graphql-input-string/issues"
   },
-  "homepage": "https://github.com/joonhocho/graphql-string#readme",
+  "homepage": "https://github.com/joonhocho/graphql-input-string#readme",
   "peerDependencies": {
     "graphql": "*"
   },
