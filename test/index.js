@@ -29,14 +29,14 @@ const getSchema = (options) => new GraphQLSchema({
   }),
 });
 
+const runQuery = (schema, value) =>
+  graphql(schema, `{ input(value: ${JSON.stringify(value)}) }`)
+    .then((res) => res.data.input);
 
 const testEqual = (schema, done, value, expected) =>
-  graphql(schema, `{ input(value: ${JSON.stringify(value)}) }`)
-    .then((res) => {
-      expect(res.data.input).to.equal(expected);
-    })
+  runQuery(schema, value)
+    .then((input) => { expect(input).to.eql(expected); })
     .then(done, done);
-
 
 const testError = (schema, done, value, expected) =>
   graphql(schema, `{ input(value: ${JSON.stringify(value)}) }`)
@@ -49,7 +49,7 @@ const testError = (schema, done, value, expected) =>
 describe('GraphQLInputString', () => {
   it('default', (done) => {
     const schema = getSchema({
-      typeName: 'default',
+      name: 'default',
     });
 
     const value = ' 921hluaocb1 au0[g2930,0.uh, ';
@@ -60,7 +60,7 @@ describe('GraphQLInputString', () => {
 
   it('trim', (done) => {
     const schema = getSchema({
-      typeName: 'trim',
+      name: 'trim',
       trim: true,
     });
 
@@ -72,7 +72,7 @@ describe('GraphQLInputString', () => {
 
   it('trimLeft', (done) => {
     const schema = getSchema({
-      typeName: 'trimLeft',
+      name: 'trimLeft',
       trimLeft: true,
     });
 
@@ -84,7 +84,7 @@ describe('GraphQLInputString', () => {
 
   it('trimRight', (done) => {
     const schema = getSchema({
-      typeName: 'trimRight',
+      name: 'trimRight',
       trimRight: true,
     });
 
@@ -96,17 +96,17 @@ describe('GraphQLInputString', () => {
 
   it('empty bad', (done) => {
     const schema = getSchema({
-      typeName: 'NonString',
+      name: 'NonString',
     });
 
     const value = '';
 
-    testError(schema, done, value, /empty/);
+    testError(schema, done, value, /empty/i);
   });
 
   it('empty ok', (done) => {
     const schema = getSchema({
-      typeName: 'NonString',
+      name: 'NonString',
       empty: true,
     });
 
@@ -117,7 +117,7 @@ describe('GraphQLInputString', () => {
 
   it('truncate', (done) => {
     const schema = getSchema({
-      typeName: 'truncate',
+      name: 'truncate',
       truncate: 10,
     });
 
@@ -127,9 +127,21 @@ describe('GraphQLInputString', () => {
     testEqual(schema, done, value, expected);
   });
 
+  it('truncate no effect', (done) => {
+    const schema = getSchema({
+      name: 'truncate',
+      truncate: 10,
+    });
+
+    const value = ' 921hlu';
+    const expected = value;
+
+    testEqual(schema, done, value, expected);
+  });
+
   it('trim and truncate', (done) => {
     const schema = getSchema({
-      typeName: 'truncate',
+      name: 'truncate',
       trim: true,
       truncate: 10,
     });
@@ -142,7 +154,7 @@ describe('GraphQLInputString', () => {
 
   it('sanitize', (done) => {
     const schema = getSchema({
-      typeName: 'sanitize',
+      name: 'sanitize',
       sanitize: (s) => s.replace(/[^\d]*/g, ''),
     });
 
@@ -154,17 +166,17 @@ describe('GraphQLInputString', () => {
 
   it('non-string bad', (done) => {
     const schema = getSchema({
-      typeName: 'NonString',
+      name: 'NonString',
     });
 
     const value = 3;
 
-    testError(schema, done, value, /type/);
+    testError(schema, done, value, /type/i);
   });
 
   it('non-string ok', (done) => {
     const schema = getSchema({
-      typeName: 'NonString',
+      name: 'NonString',
     });
 
     const value = '3';
@@ -174,18 +186,18 @@ describe('GraphQLInputString', () => {
 
   it('min bad', (done) => {
     const schema = getSchema({
-      typeName: 'min',
+      name: 'min',
       min: 3,
     });
 
     const value = 'ab';
 
-    testError(schema, done, value, /minimum.*3/);
+    testError(schema, done, value, /minimum.*3/i);
   });
 
   it('min ok', (done) => {
     const schema = getSchema({
-      typeName: 'min',
+      name: 'min',
       min: 3,
     });
 
@@ -196,18 +208,18 @@ describe('GraphQLInputString', () => {
 
   it('max bad', (done) => {
     const schema = getSchema({
-      typeName: 'max',
+      name: 'max',
       max: 5,
     });
 
     const value = 'abcdef';
 
-    testError(schema, done, value, /maximum.*5/);
+    testError(schema, done, value, /maximum.*5/i);
   });
 
   it('max ok', (done) => {
     const schema = getSchema({
-      typeName: 'max',
+      name: 'max',
       max: 5,
     });
 
@@ -218,18 +230,18 @@ describe('GraphQLInputString', () => {
 
   it('pattern bad', (done) => {
     const schema = getSchema({
-      typeName: 'pattern',
+      name: 'pattern',
       pattern: /^\w+$/,
     });
 
     const value = ' a ';
 
-    testError(schema, done, value, /pattern/);
+    testError(schema, done, value, /pattern/i);
   });
 
   it('pattern ok', (done) => {
     const schema = getSchema({
-      typeName: 'pattern',
+      name: 'pattern',
       pattern: /^\w+$/,
     });
 
@@ -240,7 +252,7 @@ describe('GraphQLInputString', () => {
 
   it('pattern string ok', (done) => {
     const schema = getSchema({
-      typeName: 'pattern',
+      name: 'pattern',
       pattern: '^\\w+$',
     });
 
@@ -251,18 +263,18 @@ describe('GraphQLInputString', () => {
 
   it('test bad', (done) => {
     const schema = getSchema({
-      typeName: 'test',
+      name: 'test',
       test: (x) => x.length < 3,
     });
 
     const value = 'abc';
 
-    testError(schema, done, value, /invalid/);
+    testError(schema, done, value, /invalid/i);
   });
 
   it('test ok', (done) => {
     const schema = getSchema({
-      typeName: 'test',
+      name: 'test',
       test: (x) => x.length < 3,
     });
 
@@ -273,7 +285,7 @@ describe('GraphQLInputString', () => {
 
   it('parse', (done) => {
     const schema = getSchema({
-      typeName: 'parse',
+      name: 'parse',
       min: 5, // not forced to parse.
       parse: (s) => s.substring(0, 3),
     });
@@ -284,16 +296,27 @@ describe('GraphQLInputString', () => {
     testEqual(schema, done, value, expected);
   });
 
-  it('typeName', () => {
-    expect(() => GraphQLInputString({
-      argName: 'a',
-    })).to.throw(/typeName/);
+  it('error', (done) => {
+    const schema = getSchema({
+      name: 'error',
+      error: (err) => JSON.stringify(err),
+    });
+
+    const value = '';
+
+    runQuery(schema, value)
+      .then((input) => {
+        input = JSON.parse(input);
+        expect(input.value).to.equal(value);
+        expect(input.type).to.equal('empty');
+      })
+      .then(done, done);
   });
 
-  it('argName', () => {
+  it('name', () => {
     expect(() => GraphQLInputString({
-      typeName: 'a',
-    })).to.throw(/argName/);
+      // name is missing
+    })).to.throw(/name/i);
   });
 
   it('serialize', (done) => {
@@ -303,7 +326,7 @@ describe('GraphQLInputString', () => {
         fields: {
           output: {
             type: GraphQLInputString({
-              typeName: 'output',
+              name: 'output',
               argName: 'output',
               trim: true,
             }),
