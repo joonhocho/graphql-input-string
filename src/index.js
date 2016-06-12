@@ -15,8 +15,10 @@ function coerceString(value) {
 }
 
 export default ({
+  capitalize,
   empty,
   error,
+  lowerCase,
   max,
   min,
   name,
@@ -28,6 +30,7 @@ export default ({
   trimLeft,
   trimRight,
   truncate,
+  upperCase,
 }) => {
   if (!name) {
     throw new Error('"name" is required');
@@ -69,6 +72,16 @@ export default ({
 
     if (truncate != null && value.length > truncate) {
       value = value.substring(0, truncate);
+    }
+
+    if (upperCase) {
+      value = value.toUpperCase();
+    } else if (lowerCase) {
+      value = value.toLowerCase();
+    }
+
+    if (capitalize) {
+      value = value[0].toUpperCase() + value.slice(1);
     }
 
     if (sanitize) {

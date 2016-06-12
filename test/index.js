@@ -152,6 +152,55 @@ describe('GraphQLInputString', () => {
     testEqual(schema, done, value, expected);
   });
 
+  it('upperCase', (done) => {
+    const schema = getSchema({
+      name: 'upperCase',
+      upperCase: true,
+    });
+
+    const value = ' 921hluAoCb1 au0[g2930,0.Uh, ';
+    const expected = value.toUpperCase();
+
+    testEqual(schema, done, value, expected);
+  });
+
+  it('lowerCase', (done) => {
+    const schema = getSchema({
+      name: 'lowerCase',
+      lowerCase: true,
+    });
+
+    const value = ' 921HluAOCB1 au0[G2930,0.uh, ';
+    const expected = value.toLowerCase();
+
+    testEqual(schema, done, value, expected);
+  });
+
+  it('capitalize', (done) => {
+    const schema = getSchema({
+      name: 'capitalize',
+      capitalize: true,
+    });
+
+    const value = 'hello my friend.';
+    const expected = 'Hello my friend.';
+
+    testEqual(schema, done, value, expected);
+  });
+
+  it('trim and capitalize', (done) => {
+    const schema = getSchema({
+      name: 'capitalize',
+      trim: true,
+      capitalize: true,
+    });
+
+    const value = '  hello my friend. ';
+    const expected = 'Hello my friend.';
+
+    testEqual(schema, done, value, expected);
+  });
+
   it('sanitize', (done) => {
     const schema = getSchema({
       name: 'sanitize',
