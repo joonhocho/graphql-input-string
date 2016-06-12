@@ -9,7 +9,7 @@ function isString(value) {
 
 function coerceString(value) {
   if (isString(value)) {
-    return String(value);
+    return value;
   }
   return null;
 }
@@ -80,7 +80,7 @@ export default ({
       value = value.toLowerCase();
     }
 
-    if (capitalize) {
+    if (capitalize && value) {
       value = value[0].toUpperCase() + value.slice(1);
     }
 

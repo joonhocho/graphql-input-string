@@ -17,10 +17,7 @@ const getSchema = (options) => new GraphQLSchema({
         type: GraphQLString,
         args: {
           value: {
-            type: GraphQLInputString({
-              argName: 'value',
-              ...options,
-            }),
+            type: GraphQLInputString(options),
           },
         },
         resolve: (_, {value}) => value,
@@ -31,7 +28,10 @@ const getSchema = (options) => new GraphQLSchema({
 
 const runQuery = (schema, value) =>
   graphql(schema, `{ input(value: ${JSON.stringify(value)}) }`)
-    .then((res) => res.data.input);
+    .then(({data, errors}) => {
+      if (errors) throw errors;
+      return data.input;
+    });
 
 const testEqual = (schema, done, value, expected) =>
   runQuery(schema, value)
@@ -184,6 +184,19 @@ describe('GraphQLInputString', () => {
 
     const value = 'hello my friend.';
     const expected = 'Hello my friend.';
+
+    testEqual(schema, done, value, expected);
+  });
+
+  it('capitalize empty string', (done) => {
+    const schema = getSchema({
+      name: 'capitalize',
+      capitalize: true,
+      empty: true,
+    });
+
+    const value = '';
+    const expected = '';
 
     testEqual(schema, done, value, expected);
   });
@@ -376,7 +389,6 @@ describe('GraphQLInputString', () => {
           output: {
             type: GraphQLInputString({
               name: 'output',
-              argName: 'output',
               trim: true,
             }),
             resolve: () => ' test ',
