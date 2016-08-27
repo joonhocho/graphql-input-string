@@ -188,6 +188,42 @@ describe('GraphQLInputString', () => {
     testEqual(schema, done, value, expected);
   });
 
+  it('capitalize characters', (done) => {
+    const schema = getSchema({
+      name: 'capitalize',
+      capitalize: 'characters',
+    });
+
+    const value = 'hello my friend.';
+    const expected = 'HELLO MY FRIEND.';
+
+    testEqual(schema, done, value, expected);
+  });
+
+  it('capitalize words', (done) => {
+    const schema = getSchema({
+      name: 'capitalize',
+      capitalize: 'words',
+    });
+
+    const value = 'hello my friend.';
+    const expected = 'Hello My Friend.';
+
+    testEqual(schema, done, value, expected);
+  });
+
+  it('capitalize sentences', (done) => {
+    const schema = getSchema({
+      name: 'capitalize',
+      capitalize: 'sentences',
+    });
+
+    const value = 'hello my friend. hello my friend.';
+    const expected = 'Hello my friend. Hello my friend.';
+
+    testEqual(schema, done, value, expected);
+  });
+
   it('capitalize empty string', (done) => {
     const schema = getSchema({
       name: 'capitalize',

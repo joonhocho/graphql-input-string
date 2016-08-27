@@ -3,9 +3,7 @@ import {GraphQLError} from 'graphql/error';
 import {Kind} from 'graphql/language';
 
 
-function isString(value) {
-  return typeof value === 'string';
-}
+const isString = (value) => typeof value === 'string';
 
 function coerceString(value) {
   if (isString(value)) {
@@ -13,6 +11,19 @@ function coerceString(value) {
   }
   return null;
 }
+
+const capitalizeString = (str) => str && (str[0].toUpperCase() + str.slice(1));
+
+// http://stackoverflow.com/a/7592235
+const strToUpperCase = (str) => str && str.toUpperCase();
+
+const capitalizeCharacters = strToUpperCase;
+
+const wordRegex = /(?:^|\s)\S/g;
+const capitalizeWords = (str) => str && str.replace(wordRegex, strToUpperCase);
+
+const sentenceRegex = /(?:^|\.\s)\S/g;
+const capitalizeSentences = (str) => str && str.replace(sentenceRegex, strToUpperCase);
 
 export default ({
   capitalize,
@@ -56,7 +67,6 @@ export default ({
       return null;
     }
 
-
     // Sanitization Phase
 
     if (trim) {
@@ -81,7 +91,15 @@ export default ({
     }
 
     if (capitalize && value) {
-      value = value[0].toUpperCase() + value.slice(1);
+      if (capitalize === 'characters') {
+        value = capitalizeCharacters(value);
+      } else if (capitalize === 'words') {
+        value = capitalizeWords(value);
+      } else if (capitalize === 'sentences') {
+        value = capitalizeSentences(value);
+      } else {
+        value = capitalizeString(value);
+      }
     }
 
     if (sanitize) {
