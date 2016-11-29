@@ -42,6 +42,7 @@ export default ({
   trimRight,
   truncate,
   upperCase,
+  description,
 }) => {
   if (!name) {
     throw new Error('"name" is required');
@@ -172,6 +173,7 @@ export default ({
 
   return new GraphQLScalarType({
     name,
+    description,
     serialize: coerceString,
     parseValue,
     parseLiteral(ast) {
