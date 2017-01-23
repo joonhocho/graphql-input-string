@@ -42,6 +42,7 @@ export default ({
   trimRight,
   truncate,
   upperCase,
+  ...config,
 }) => {
   if (!name) {
     throw new Error('"name" is required');
@@ -181,5 +182,6 @@ export default ({
       }
       return null;
     },
+    ...config,
   });
 };

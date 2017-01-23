@@ -93,6 +93,10 @@ GraphQLInputString({
   // value.
   // May throw an error or return a value.
   parse: ((string) => any) = null,
+
+  // If you want to pass some config to type constructor, simply add them here.
+  // For example,
+  description: string,
 });
 
 

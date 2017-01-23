@@ -417,6 +417,15 @@ describe('GraphQLInputString', () => {
     })).to.throw(/name/i);
   });
 
+  it('description', () => {
+    const description = 'this is description';
+    const type = GraphQLInputString({
+      name: 'desc',
+      description,
+    });
+    expect(type.description).to.equal(description);
+  });
+
   it('serialize', (done) => {
     const schema = new GraphQLSchema({
       query: new GraphQLObjectType({
