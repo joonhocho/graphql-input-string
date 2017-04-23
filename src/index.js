@@ -42,6 +42,7 @@ export default ({
   trimRight,
   truncate,
   upperCase,
+  description,
   ...config,
 }) => {
   if (!name) {
@@ -60,6 +61,35 @@ export default ({
         ast ? [ast] : []
       );
     };
+  }
+
+  if (!description && !test) {
+    // Autogenerate a description if no test is present
+    description = 'A string';
+    if (min && max) {
+      description += ` between ${min} and ${max} characters`
+    } else if (min) {
+      description += ` of at least ${min} characters`
+    } else if (max) {
+      description += ` at most ${max} characters`
+    }
+
+    if (pattern) {
+      if (description.length > 'A string'.length) {
+        description += ' and';
+      }
+      description += ` that matches the pattern '${pattern}'`;
+    }
+
+    if (trim || trimLeft || trimRight) {
+      if (trim) {
+        description += ' that is trimmed.';
+      } else {
+        description += `that is trimmed to the ${trimLeft ? 'left' : 'right'}.`;
+      }
+    } else {
+      description += '.';
+    }
   }
 
   const parseValue = (value, ast) => {
@@ -175,6 +205,7 @@ export default ({
     name,
     serialize: coerceString,
     parseValue,
+    description,
     parseLiteral(ast) {
       const {kind, value} = ast;
       if (kind === Kind.STRING) {
