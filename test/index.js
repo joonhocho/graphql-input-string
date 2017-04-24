@@ -449,4 +449,33 @@ describe('GraphQLInputString', () => {
       })
       .then(done, done);
   });
+
+  it('autodescriptors', () => {
+    let scalar = GraphQLInputString({
+              name: 'output',
+              min: 2,
+              trim: true,
+            });
+
+    expect(scalar.description).to.equal('A string of at least 2 characters that is trimmed.')
+
+    scalar = GraphQLInputString({
+              name: 'output',
+              min: 2,
+              max: 4,
+              trim: true,
+            });
+
+    expect(scalar.description).to.equal('A string between 2 and 4 characters that is trimmed.')
+
+    scalar = GraphQLInputString({
+              name: 'output',
+              min: 2,
+              max: 4,
+              trim: true,
+              description: 'A custom string.',
+            });
+
+    expect(scalar.description).to.equal('A custom string.')
+  });
 });
