@@ -148,6 +148,7 @@ export default ({
           case 'sentences':
             value = value.replace(sentenceRegex, strToUpperCase);
             break;
+          case 'first':
           default:
             value = value[0].toUpperCase() + value.slice(1);
             break;

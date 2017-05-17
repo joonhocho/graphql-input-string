@@ -62,8 +62,24 @@ GraphQLInputString({
   // Whether to trimRight strings.
   trimRight: boolean = false,
 
+  // Whether to disallow newline characters.
+  singleline: boolean = false,
+
+  // Whether to collapse whitespace characters.
+  collapseWhitespace: boolean = false,
+
   // If specified, truncate strings to the specified length.
   truncate: number = null,
+
+  // Whether to transform characters to uppercase.
+  upperCase: boolean = false,
+
+  // Whether to transform characters to lowercase.
+  lowercase: boolean = false,
+
+  // If specified, capitalize string according to specified rule.
+  // possible values: 'characters' | 'words' | 'sentences' | 'first'
+  capitalize: string = null,
 
   // Sanitize function that is called at the end of sanitzation phase and before
   // validation phase.
@@ -94,7 +110,7 @@ GraphQLInputString({
   // May throw an error or return a value.
   parse: ((string) => any) = null,
 
-  // If you want to pass some config to type constructor, simply add them here.
+  // If you want to pass additional config to type constructor, simply add them here.
   // For example,
   description: string,
 });
