@@ -94,6 +94,43 @@ describe('GraphQLInputString', () => {
     testEqual(schema, done, value, expected);
   });
 
+  it('singleline', (done) => {
+    const schema = getSchema({
+      name: 'singleline',
+      singleline: true,
+    });
+
+    const value = '\nHello\n World\n \nHi';
+    const expected = ' Hello  World   Hi';
+
+    testEqual(schema, done, value, expected);
+  });
+
+  it('collapseWhitespace', (done) => {
+    const schema = getSchema({
+      name: 'collapseWhitespace',
+      collapseWhitespace: true,
+    });
+
+    const value = '   Hello  \n   World\n ';
+    const expected = ' Hello\nWorld\n';
+
+    testEqual(schema, done, value, expected);
+  });
+
+  it('collapseWhitespaceSingleline', (done) => {
+    const schema = getSchema({
+      name: 'collapseWhitespace',
+      collapseWhitespace: true,
+      singleline: true,
+    });
+
+    const value = ' \n\t\r  Hello   \n  World';
+    const expected = ' Hello World';
+
+    testEqual(schema, done, value, expected);
+  });
+
   it('empty bad', (done) => {
     const schema = getSchema({
       name: 'NonString',
@@ -452,30 +489,30 @@ describe('GraphQLInputString', () => {
 
   it('autodescriptors', () => {
     let scalar = GraphQLInputString({
-              name: 'output',
-              min: 2,
-              trim: true,
-            });
+      name: 'output',
+      min: 2,
+      trim: true,
+    });
 
-    expect(scalar.description).to.equal('A string of at least 2 characters that is trimmed.')
-
-    scalar = GraphQLInputString({
-              name: 'output',
-              min: 2,
-              max: 4,
-              trim: true,
-            });
-
-    expect(scalar.description).to.equal('A string between 2 and 4 characters that is trimmed.')
+    expect(scalar.description).to.equal('A string of at least 2 characters that is trimmed.');
 
     scalar = GraphQLInputString({
-              name: 'output',
-              min: 2,
-              max: 4,
-              trim: true,
-              description: 'A custom string.',
-            });
+      name: 'output',
+      min: 2,
+      max: 4,
+      trim: true,
+    });
 
-    expect(scalar.description).to.equal('A custom string.')
+    expect(scalar.description).to.equal('A string between 2 and 4 characters that is trimmed.');
+
+    scalar = GraphQLInputString({
+      name: 'output',
+      min: 2,
+      max: 4,
+      trim: true,
+      description: 'A custom string.',
+    });
+
+    expect(scalar.description).to.equal('A custom string.');
   });
 });

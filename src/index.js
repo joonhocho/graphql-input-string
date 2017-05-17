@@ -3,30 +3,32 @@ import {GraphQLError} from 'graphql/error';
 import {Kind} from 'graphql/language';
 
 
-const isString = (value) => typeof value === 'string';
-
 function coerceString(value) {
-  if (isString(value)) {
+  if (typeof value === 'string') {
     return value;
   }
   return null;
 }
 
-const capitalizeString = (str) => str && (str[0].toUpperCase() + str.slice(1));
-
 // http://stackoverflow.com/a/7592235
-const strToUpperCase = (str) => str && str.toUpperCase();
-
-const capitalizeCharacters = strToUpperCase;
+const strToUpperCase = (str) => str.toUpperCase();
 
 const wordRegex = /(?:^|\s)\S/g;
-const capitalizeWords = (str) => str && str.replace(wordRegex, strToUpperCase);
 
 const sentenceRegex = /(?:^|\.\s)\S/g;
-const capitalizeSentences = (str) => str && str.replace(sentenceRegex, strToUpperCase);
+
+const newlineRegex = /[\r\n]+/g;
+
+const newlineWithWSRegex = /\s*[\r\n]+\s*/g;
+
+const whitespace = /\s+/g;
+
+const collapseWS = (str) => str.replace(whitespace, ' ');
 
 export default ({
   capitalize,
+  collapseWhitespace,
+  description,
   empty,
   error,
   lowerCase,
@@ -36,13 +38,13 @@ export default ({
   parse,
   pattern,
   sanitize,
+  singleline,
   test,
   trim,
   trimLeft,
   trimRight,
   truncate,
   upperCase,
-  description,
   ...config,
 }) => {
   if (!name) {
@@ -100,42 +102,63 @@ export default ({
 
     // Sanitization Phase
 
-    if (trim) {
-      value = value.trim();
-    } else {
-      if (trimLeft) {
-        value = value.trimLeft();
-      }
-      if (trimRight) {
-        value = value.trimRight();
-      }
-    }
-
-    if (truncate != null && value.length > truncate) {
-      value = value.substring(0, truncate);
-    }
-
-    if (upperCase) {
-      value = value.toUpperCase();
-    } else if (lowerCase) {
-      value = value.toLowerCase();
-    }
-
-    if (capitalize && value) {
-      if (capitalize === 'characters') {
-        value = capitalizeCharacters(value);
-      } else if (capitalize === 'words') {
-        value = capitalizeWords(value);
-      } else if (capitalize === 'sentences') {
-        value = capitalizeSentences(value);
+    if (value) {
+      if (trim) {
+        value = value.trim();
       } else {
-        value = capitalizeString(value);
+        if (trimLeft) {
+          value = value.trimLeft();
+        }
+        if (trimRight) {
+          value = value.trimRight();
+        }
+      }
+
+      if (value) {
+        if (singleline) {
+          value = value.replace(newlineRegex, ' ');
+        }
+
+        if (collapseWhitespace) {
+          if (singleline) {
+            value = value.replace(whitespace, ' ');
+          } else {
+            value = value.split(newlineWithWSRegex).map(collapseWS).join('\n');
+          }
+        }
+
+        if (truncate != null && value.length > truncate) {
+          value = value.substring(0, truncate);
+        }
+
+        if (upperCase) {
+          value = value.toUpperCase();
+        } else if (lowerCase) {
+          value = value.toLowerCase();
+        }
+
+        if (capitalize) {
+          switch (capitalize) {
+          case 'characters':
+            value = value.toUpperCase();
+            break;
+          case 'words':
+            value = value.replace(wordRegex, strToUpperCase);
+            break;
+          case 'sentences':
+            value = value.replace(sentenceRegex, strToUpperCase);
+            break;
+          default:
+            value = value[0].toUpperCase() + value.slice(1);
+            break;
+          }
+        }
       }
     }
 
     if (sanitize) {
       value = sanitize(value);
-      if (!isString(value)) {
+      if (typeof value !== 'string') {
         return null;
       }
     }
