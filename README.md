@@ -75,7 +75,7 @@ GraphQLInputString({
   upperCase: boolean = false,
 
   // Whether to transform characters to lowercase.
-  lowercase: boolean = false,
+  lowerCase: boolean = false,
 
   // If specified, capitalize string according to specified rule.
   // possible values: 'characters' | 'words' | 'sentences' | 'first'
